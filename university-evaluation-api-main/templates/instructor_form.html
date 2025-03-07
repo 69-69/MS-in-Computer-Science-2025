@@ -1,0 +1,38 @@
+<!-- templates/instructor_form.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1 class="heading-text">{{ subTitle }}</h1>
+
+<!-- Common header included from BaseView -->
+{% include header %}
+
+<div class="spacer">
+    <form method="POST" action="{{ url_for('add_instructor') }}" class="styled-form">
+        <!-- CSRF Token for Flask Security -->
+        {#        <input type="hidden" name="csrf_token" value="steve">#}
+
+        {% if not success %}
+            <p style="color:red">{{ error }}</p>
+        {% endif %}
+
+        <div class="form-group" style="margin-right: 20px;">
+            <label for="name">Instructor Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">Add Instructor</button>
+    </form>
+</div>
+
+<!-- Common footer included from BaseView -->
+{% include footer %}
+</body>
+</html>

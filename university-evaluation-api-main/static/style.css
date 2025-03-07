@@ -1,0 +1,250 @@
+.heading-text {
+    display: block;
+    text-align: start;
+    width: 100%;
+    padding: 5px 50px;
+}
+
+.heading-h2 {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: #333;
+}
+
+.delete-btn, .edit-btn {
+    padding: 5px !important;
+    font-size: 12px !important;
+    background-color: #f80606 !important;
+    width: 100% !important;
+}
+.delete-btn{width: 50% !important;}
+
+/* Navbar Container */
+nav {
+    background-color: #333; /* Dark background color */
+    padding: 10px 0;
+    font-family: Arial, sans-serif;
+    text-align: center; /* Center-align the links */
+}
+
+/* Navbar List */
+.navbar {
+    list-style-type: none; /* Remove bullet points */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: center; /* Center the menu items */
+}
+
+/* Navbar List Items */
+.navbar li {
+    margin: 0 20px; /* Space between items */
+}
+
+/* Navbar Links */
+.navbar a {
+    text-decoration: none; /* Remove underlines from links */
+    color: white; /* White text */
+    font-size: 16px;
+    padding: 8px 15px;
+    border-radius: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Navbar Links Hover Effect */
+.navbar a:hover {
+    background-color: #007bff; /* Change background color on hover */
+    color: #fff; /* Ensure text remains white on hover */
+}
+
+/* Active link style (optional) */
+.navbar a.active {
+    background-color: #000; /* A darker blue for the active link */
+    font-weight: bold;
+    border-left: 3px solid #fff;
+}
+
+.navbar a.hidden {
+    display: none !important;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column; /* Stack menu items vertically */
+    }
+
+    .navbar li {
+        margin: 10px 0; /* Adjust margin for vertical layout */
+    }
+}
+
+body {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* General form styling */
+.styled-form {
+    max-width: 500px; /* Set max width of the form */
+    margin: 20px auto; /* Center the form horizontally */
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    font-family: Arial, sans-serif;
+}
+
+/* Form group for spacing between elements */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Label styling */
+.styled-form label {
+    display: block; /* Ensures labels appear above inputs */
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Select dropdown styling */
+.styled-form select, .styled-form input {
+    width: 100%; /* Make select dropdowns full width */
+    padding: 10px; /* Add padding inside the dropdown */
+    border-radius: 4px; /* Rounded corners for the dropdown */
+    border: 1px solid #ddd; /* Light border */
+    font-size: 14px;
+    background-color: #fff; /* White background */
+    color: #333; /* Text color */
+}
+
+/* Focus state for select dropdown */
+.styled-form select:focus, input:focus {
+    border-color: #007bff; /* Blue border when focused */
+    outline: none; /* Remove default focus outline */
+}
+
+/* Submit button styling */
+.submit-btn {
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text */
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for submit button */
+.submit-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .styled-form {
+        padding: 15px; /* Less padding on smaller screens */
+        margin: 10px; /* Less margin */
+    }
+
+    .submit-btn {
+        font-size: 14px; /* Smaller font size for button */
+    }
+}
+
+.spacer {
+    margin: 50px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+th {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+tbody tr {
+    background-color: #f9f9f9;
+    text-align: start;
+}
+
+table thead {
+    background-color: #007bff;
+    color: white;
+    text-align: left;
+}
+
+/* Collapsible Section Styling */
+.collapsible {
+    background-color: #f1f1f1;
+    color: black;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.active, .collapsible:hover {
+    background-color: #ddd;
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+.flashes {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    text-decoration: none;
+    list-style-type: none;
+    padding: 0;
+}
+ul.flashes li {
+    width: 50%;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-weight: 'bold';
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+ul.flashes li.success {
+    border-color: green;
+    color: green;
+}
+ul.flashes li.info {
+    border-color: blue;
+    color: blue
+}
+ul.flashes li.warning {
+    border-color: orange;
+    color: orange
+}
+ul.flashes li.error {
+    color: red;
+}

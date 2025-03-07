@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .link-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<h1 class="heading-text">{{ subTitle }}</h1>
+
+<!-- Common header included from BaseView -->
+{% include header %}
+<div class="spacer">
+    {% if errors and errors|length > 0 %}
+        <div class="error-section">
+            <h2>Errors</h2>
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <p>
+        <a href="/degrees/add" class="link-btn">Create New Degree</a>
+    </p>
+
+    <form method="post" action="/degrees" class="styled-form">
+        <div class="form-group">
+            <label for="degree-selection">Select a Degree:</label>
+            <select id="degree-selection" name="degree-selection" required>
+                <option value=""></option>
+                {% for item in degrees %}
+                    <option value="{{ item.degree_name }}<<>>{{ item.level }}">{{ item.degree_name }}
+                        - {{ item.level }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <input type="hidden" name="request-type" value="open_degree"/>
+
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+
+    {% if selected_degree %}
+        <h2 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Degree Information</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Department</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ selected_degree.degree_name }}</td>
+                <td>{{ selected_degree.level }}</td>
+                <td>{{ selected_degree.department_name }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+    {% if courses %}
+        <h3 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Degree Courses</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Course Number</th>
+                <th>Course Name</th>
+                <th>Is Core</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for course in courses %}
+                <tr>
+                    <td>{{ course.course_number }}</td>
+                    <td>{{ course.course_name }}</td>
+                    <td>{{ 'true' if course.is_core == 1 else 'false' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+{% if selected_degree and courses %}
+    <div>
+        <h3 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Degree Sections</h3>
+        <form method="post" action="/degrees" class="styled-form">
+            <div class="form-group">
+                <label for="beginning-year">Beginning Year:</label>
+                <select id="beginning-year" name="beginning-year" required>
+                    <option value=""></option>
+                    {% for year in range(2010, 2031) %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="beginning-semester">Beginning Semester:</label>
+                <select id="beginning-semester" name="beginning-semester" required>
+                    <option value=""></option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                    <option value="Fall">Fall</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ending-year">Ending Year:</label>
+                <select id="ending-year" name="ending-year" required>
+                    <option value=""></option>
+                    {% for year in range(2010, 2031) %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ending-semester">Ending Semester:</label>
+                <select id="ending-semester" name="ending-semester" required>
+                    <option value=""></option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                    <option value="Fall">Fall</option>
+                </select>
+            </div>
+            <input type="hidden" name="degree-selection" value="{{ selected_degree.degree_name }}<<>>{{ selected_degree.level }}"/>
+            <input type="hidden" name="request-type" value="section_search"/>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+    {% if sections %}
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Section ID</th>
+                <th>Course Number</th>
+                <th>Course Name</th>
+                <th>Year</th>
+                <th>Semester</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for section in sections %}
+                <tr>
+                    <td>{{ section.section_id }}</td>
+                    <td>{{ section.course_number }}</td>
+                    <td>{{ section.course_name }}</td>
+                    <td>{{ section.year }}</td>
+                    <td>{{ section.semester }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endif %}
+
+
+{% if goals %}
+    <div class="spacer">
+        <h3 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Degree Goals</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Goal Code</th>
+                <th>Goal Description</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for goal in goals %}
+                <tr>
+                    <td>{{ goal.goal_code }}</td>
+                    <td>{{ goal.goal_description }}</td>
+                    <td><a href="/degrees/goal/courses?goal_code={{ goal.goal_code }}&degree_name={{ selected_degree.degree_name }}&degree_level={{ selected_degree.level }}" target="_blank">See Associated Courses</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+</div>
+<!-- Common footer included from BaseView -->
+{% include footer %}
+</body>
+</html>

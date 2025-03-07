@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        let degreeCourseCount = 0;
+        const degreeCourses = [
+            {% for course in courses %}
+                '{{ course.course_number }}',
+            {% endfor %}
+        ];
+        function addDegreeCourse() {
+            const existingSelects = document.querySelectorAll('.course-number-select');
+            const alreadySelected = Array.from(existingSelects).map((es) => es.value);
+
+            degreeCourseCount ++;
+            const container = document.getElementById('add-classes');
+            const newRow = document.createElement('tr')
+            const selectCell =  document.createElement('td')
+            const checkBoxCell = document.createElement('td')
+
+            const selectElement = document.createElement('select');
+            selectElement.name = `course_number_${degreeCourseCount}`;
+            selectElement.required = true;
+            selectElement.classList.add('course-number-select');
+            const emptyOption = document.createElement('option');
+            selectElement.appendChild(emptyOption);
+            degreeCourses.forEach((course) => {
+                if (alreadySelected.includes(course)) {
+                    return;
+                }
+                const option = document.createElement('option');
+                option.value = course;
+                option.textContent = course;
+                selectElement.appendChild(option);
+            });
+            selectCell.appendChild(selectElement);
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = `course_is_core_${degreeCourseCount}`;
+            checkBoxCell.appendChild(checkbox)
+
+            newRow.appendChild(selectCell);
+            newRow.appendChild(checkBoxCell);
+            container.appendChild(newRow);
+
+        }
+    </script>
+    <style>
+        #new-course-btn {
+            background-color: #007bff;
+            margin-left: auto;
+            margin-right: 0;
+            color: white;
+            font-size: 20pt;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            border-width: 0;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #btn-container {
+            display: flex;
+            flex-grow: 1;
+            justify-content: end;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 class="heading-text">{{ subTitle }}</h1>
+
+<!-- Common header included from BaseView -->
+{% include header %}
+<div class="spacer">
+    <h3 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Add Degree</h3>
+    <form method="post" action="/degrees/add" class="styled-form" id="degree-form">
+        <div class="form-group">
+            <label for="degree_name">Degree Name:</label>
+            <input type="text" id="degree_name" name="degree_name" value="" required>
+        </div>
+        <div class="form-group">
+            <label for="degree_level">Degree Level:</label>
+            <select id="degree_level" name="degree_level" required>
+                <option value=""></option>
+                {% for item in degreeLevels %}
+                    <option value="{{ item.level }}">{{ item.level }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="department_name">Department Name:</label>
+            <select id="department_name" name="department_name" required>
+                <option value=""></option>
+                {% for department in departments %}
+                    <option value="{{ department.department_name }}">{{ department.department_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+                <thead style="background-color: #007bff; color: white; text-align: left;">
+                    <tr><th>Course Number</th><th>Is Coure</th></tr>
+                </thead>
+                <tbody id="add-classes"></tbody>
+            </table>
+            <div id="btn-container">
+                <button id="new-course-btn" type="button" onclick="addDegreeCourse()">+</button>
+            </div>
+        </div>
+        <input type="hidden" name="request-type" value="add_degree"/>
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+
+    <form method="post" action="/degrees/add" class="styled-form" id="level-form">
+        <div class="form-group">
+            <label for="new_level">Level Name:</label>
+            <input type="text" id="new_level" name="new_level" value="" required>
+        </div>
+ 
+        <input type="hidden" name="request-type" value="add_level"/>
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+
+</div>
+<!-- Common footer included from BaseView -->
+{% include footer %}
+</body>
+</html>

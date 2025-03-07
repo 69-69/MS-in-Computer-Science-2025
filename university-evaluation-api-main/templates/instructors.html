@@ -1,0 +1,50 @@
+<!-- templates/instructors.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1 class="heading-text">{{ subTitle }}</h1>
+<!-- Common header included from BaseView -->
+{% include header %}
+
+<div class="spacer">
+    <h2 class="heading-h2">List Instructors</h2>
+    {% if instructors %}
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for instructor in instructors %}
+                <tr>
+                    <td style="">{{ instructor.instructor_id.upper() }}</td>
+                    <td>{{ instructor.name.upper() }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('delete_instructor') }}">
+                            <input type="hidden" id="instructor_id" name="instructor_id" value="{{ instructor.instructor_id }}">
+                            <button type="submit" class="submit-btn delete-btn">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No Courses found.</p>
+    {% endif %}
+</div>
+<!-- Common footer included from BaseView -->
+{% include footer %}
+</body>
+</html>

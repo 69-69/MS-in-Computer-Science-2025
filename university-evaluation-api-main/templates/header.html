@@ -1,0 +1,23 @@
+<div>
+<nav>
+    <ul class="navbar">
+        <li><a href="/" class="{{ 'active' if current_url == '/' or '' else '' }}">Home</a></li>
+        <li><a href="/degrees" class="{{ 'active' if current_url == '/degrees' else '' }}">Degrees</a></li>
+        <li><a href="/courses" class="{{ 'active' if current_url == '/courses' else '' }}">Courses</a></li>
+        <li><a href="/instructor_query" class="{{ 'active' if current_url == '/instructor_query' else '' }}"> Find Instructor</a></li>
+        <li><a href="/add_instructor" class="{{ 'active' if current_url == '/add_instructor' else '' }}">Add Instructor</a></li>
+        <li><a href="/instructors" class="{{ 'active' if current_url == '/instructors' else '' }}">List Instructors</a></li>
+        <li><a href="/evaluation" class="{{ 'active' if current_url == '/evaluation' else '' }}">Evaluation</a></li>
+        <li><a href="/departments" class="{{ 'active' if current_url == '/departments' else '' }}">Departments</a></li>
+    </ul>
+</nav>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+        <li class="{{category}}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+</div>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Instructor Sections</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1 class="heading-text">Sections Taught by Instructor</h1>
+<!-- Common footer included from BaseView -->
+{% include header %}
+
+<div class="spacer">
+    <h2 class="heading-h2">Find Instructor</h2>
+    <form method="POST" class="styled-form">
+        <!-- CSRF Token for Flask Security -->
+        {#        <input type="hidden" name="csrf_token" value="steve">#}
+
+        {% if not success %}
+            <p style="color:red">{{ error }}</p>
+        {% endif %}
+
+        <!-- Instructor Dropdown -->
+        <div class="form-group">
+            <label for="instructor_id">Instructor:</label>
+            <select id="instructor_id" name="instructor_id" required>
+                <option value="">Select Instructor</option>
+                {% for instructor in instructors %}
+                    <option value="{{ instructor.instructor_id }}" data-name="{{ instructor.name }}">
+                        {{ instructor.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Start Year Dropdown -->
+        <div class="form-group">
+            <label for="start_year">Start Year:</label>
+            <select id="start_year" name="start_year" required>
+                <option value="">Select Start Year</option>
+                {% for year in years %}
+                    <option value="{{ year.year }}">{{ year.year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- End Year Dropdown -->
+        <div class="form-group">
+            <label for="end_year">End Year:</label>
+            <select id="end_year" name="end_year" required>
+                <option value="">Select End Year</option>
+                {% for year in years %}
+                    <option value="{{ year.year }}">{{ year.year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submit-btn" class="submit-btn">Submit</button>
+    </form>
+
+    {% if sections %}
+        <h2 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Sections Taught
+            by {{ instructor_name or 'Instructor' }}
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Instructor Name</th>
+                <th>Section ID</th>
+                <th>Course Number</th>
+                <th>Course Name</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Enrollment</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for section in sections %}
+                <tr>
+                    <td>{{ section.name }}</td>
+                    <td>{{ section.section_id }}</td>
+                    <td>{{ section.course_number }}</td>
+                    <td>{{ section.course_name }}</td>
+                    <td>{{ section.year }}</td>
+                    <td>{{ section.semester }}</td>
+                    <td>{{ section.enrollment }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+
+<!-- Common footer included from BaseView -->
+{% include footer %}
+
+</body>
+</html>

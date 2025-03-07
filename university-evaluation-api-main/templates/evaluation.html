@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1 class="heading-text">{{ subTitle }}</h1>
+<!-- Common header included from BaseView -->
+{% include header %}
+
+<!-- Collapsible Section for Goal Data Entry -->
+<button class="collapsible">Goal Data Entry</button>
+<div class="spacer">
+    <form method="POST" action="/add_goal" class="styled-form">
+        <div class="form-group" style="margin-right: 20px;">
+            <label for="goal_code">Goal Code:</label>
+            <input 
+                type="text" 
+                id="goal_code" 
+                name="goal_code" 
+                placeholder="000" 
+                maxlength="3" 
+                required 
+                pattern="\d{3}" 
+                title="Enter a 3-digit number"
+            >
+        </div>
+        <div class="form-group">
+            <label for="degree_name">Degree Name:</label>
+            <select id="degree_name" name="degree_name" required>
+                {% for degree in degrees %}
+                    <option value="{{ degree.degree_name }}">{{ degree.degree_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="degree_level">Degree Level:</label>
+            <select id="degree_level" name="degree_level" required>
+                <option value="Undergraduate">Undergraduate</option>
+                <option value="Graduate">Graduate</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="course_number">Course Number:</label>
+            <select id="course_number" name="course_number" required>
+                {% for course in courses %}
+                    <option value="{{ course.course_number }}">{{ course.course_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="goal_description">Goal Description:</label>
+            <textarea id="goal_description" name="goal_description" required style="width: 100%;"></textarea>
+        </div>
+        <button type="submit" id="add-goal-btn" class="submit-btn">Add Goal</button>
+    </form>
+    <section id="goals-list" style="margin-top: 20px;">
+        <h4 style="font-family: Arial, sans-serif; text-align: center; color: #333;">
+            Goals List
+        </h4>
+        {% if goals %}
+            <button class="collapsible">Goal List</button>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+                <thead style="background-color: #007bff; color: white; text-align: left;">
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for goal in goals %}
+                    <tr>
+                        <td>{{ goal.goal_code }}</td>
+                        <td>{{ goal.goal_description }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No goals have been added yet.</p>
+        {% endif %}
+    </section>
+</div>
+
+
+<!-- Collapsible Section for Evaluation Status -->
+
+<button class="collapsible">Evaluation Status</button>
+<div class="spacer">
+    <form id="semester-form" method="POST" class="styled-form">
+        <div class="form-group">
+            <label for="semester">Semester:</label>
+            <select id="semester" name="semester" required>
+                <option value="" disabled selected>Select Semester</option>
+                {% for semester in semesters %}
+                    <option value="{{ semester.semester_code }}">{{ semester.semester_code }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-right: 20px;">
+            <label for="percentage">Non-Failing Percentage Threshold:</label>
+            <input type="number" id="percentage" name="percentage" min="0" max="100" required>
+        </div>
+
+
+        <button type="button" id="fetch-sections-button" class="submit-btn">Fetch Sections</button>
+    </form>
+
+    <div id="sections-status-container" style="margin-top: 20px;">
+        <h4>Sections and Evaluation Status</h4>
+
+
+        <table id="sections-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th>Section ID</th>
+                <th>Degree</th>
+                <th>Degree Level</th>
+                <th>Course Number</th>
+                <th>Completion Status</th>
+                <th>Improvement Note Completion</th>
+                <th>Non-Failing Percentage</th>
+            </tr>
+            </thead>
+            <tbody id="sections-table-body">
+            <tr>
+                <td colspan="5">Select a semester and percentage to view sections.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+<!-- Collapsible Section for Evaluation Input -->
+<button class="collapsible">Evaluation Input</button>
+<div class="spacer">
+    <form id="fetch-evaluation-sections-form" method="POST" class="styled-form">
+        <div class="form-group">
+            <label for="semester-eval">Semester:</label>
+            <select id="semester-eval" name="semester" required>
+                <option value="" disabled selected>Select Semester</option>
+                {% for semester in semesters %}
+                    <option value="{{ semester.semester_code }}">{{ semester.semester_code }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="instructor-eval">Instructor:</label>
+            <select id="instructor-eval" name="instructor" required>
+                <option value="" disabled selected>Select Instructor</option>
+                {% for instructor in instructors %}
+                    <option value="{{ instructor.instructor_id }}">{{ instructor.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="button" id="fetch-evaluation-sections-button" class="submit-btn">Fetch Sections</button>
+    </form>
+
+        <!-- Edit/Add Evaluation Form -->
+        <div id="evaluation-sections-container" style="margin-top: 20px;">
+            <h4>Sections Taught</h4>
+            <table id="evaluation-sections-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Section ID</th>
+                        <th>Course Number</th>
+                        <th>Year</th>
+                        <th>Semester</th>
+                        <th>Degree</th>
+                        <th>Degree Level</th>
+                        <th>Goal Code</th>
+                        <th>Goal Description</th>
+                        <th>Improvement</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>F</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="evaluation-sections-body">
+                    <tr>
+                        <td colspan="12">Select a semester and instructor to view sections.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Edit/Add Evaluation Form -->
+        <div id="edit-section-container" style="margin-top: 20px; display: none;">
+            <h4>Edit/Add Data</h4>
+            <form id="edit-section-form" method="POST" class="styled-form">
+                <!-- Hidden sections -->
+                <input type="hidden" id="section-id" name="section_id">
+                <input type="hidden" id="course-number" name="course_number">
+                <input type="hidden" id="year" name="year">
+                <input type="hidden" id="semester" name="semester">
+                <input type="hidden" id="goal-code" name="goal_code">        
+                
+                <!-- Completion Fields -->
+                <div class="form-group">
+                    <label for="instructor-notes">Improvement:</label>
+                    <textarea id="instructor-notes" name="instructor_notes" required style="width: 100%;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="a-completion">Number of A:</label>
+                    <input type="number" id="a-completion" name="number_of_a" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="b-completion">Number of B:</label>
+                    <input type="number" id="b-completion" name="number_of_b" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="c-completion">Number of C:</label>
+                    <input type="number" id="c-completion" name="number_of_c" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="d-completion">Number of D:</label>
+                    <input type="number" id="d-completion" name="number_of_d" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="f-completion">Number of F:</label>
+                    <input type="number" id="f-completion" name="number_of_f" min="0" required>
+                </div>
+        
+                <!-- Duplicate Across Degrees -->
+                <div class="form-group">
+                    <label for="duplicate-degrees">Duplicate Across Degrees:</label>
+                    <input type="checkbox" id="duplicate-degrees" name="duplicate_degrees">
+                </div>
+        
+                <button type="button" id="save-evaluation-data" class="submit-btn">Save</button>
+            </form>
+        </div>
+
+
+{% if not success %}
+    <h2 style="color:red;">Failed to connect to the database.</h2>
+    <p>The error was: {{ error }}</p>
+{% endif %}
+
+<script type="application/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // Collapsible Button Functionality
+        const collapsibles = document.querySelectorAll(".collapsible");       
+        collapsibles.forEach((collapsible) => {
+            const content = collapsible.nextElementSibling;
+            collapsible.classList.remove("active");
+            if (content) {
+                content.style.display = "none"; 
+            }
+            
+            collapsible.addEventListener("click", function () {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+        
+        document.getElementById('add-goal-btn').addEventListener('click', (event) => {
+            const goalCodeInput = document.getElementById('goal_code');
+            const goalCode = goalCodeInput.value;
+            const degreeNameInput = document.getElementById('degree_name');
+            const degreeLevelInput = document.getElementById('degree_level');
+            
+            const degreeName = degreeNameInput.value;
+            const degreeLevel = degreeLevelInput.value;
+
+            if ((degreeLevel === 'Graduate' && degreeName.includes('BS')) || (degreeLevel === 'Undergraduate' && degreeName.includes('MS')) ) {
+                alert('Degree Level Must Correlate with Degree');
+                event.preventDefault();
+                return;
+            }
+
+            // Validate the goal code to ensure it's a 3-digit non-negative number
+            if (!/^\d{3}$/.test(goalCode)) {
+                alert("Goal Code must be a 3-digit non-negative number.");
+                event.preventDefault();
+                return;
+            }
+        });
+        
+        
+        // Evaluation Status Logic
+        document.getElementById('fetch-sections-button').addEventListener('click', () => {
+            const semester = document.getElementById('semester').value;
+            const percentage = document.getElementById('percentage').value;
+    
+            const requestBody = {semester: semester, percentage: percentage};
+    
+            fetch('/get_sections_status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const sectionsTable = document.getElementById('sections-table-body');
+                    sectionsTable.innerHTML = ''; // Clear previous data
+    
+                    if (data.sections && data.sections.length > 0) {
+                        data.sections.forEach(section => {
+                            const completionStatus = section.completion_status;
+                            const instructorNotesStatus = section.instructor_notes_status;
+    
+                            // Ensure non_failing_percentage is handled properly
+                            let nonFailingPercentage = 'Not Applicable';
+                            if (section.non_failing_percentage !== null && !isNaN(parseFloat(section.non_failing_percentage))) {
+                                nonFailingPercentage = `${parseFloat(section.non_failing_percentage).toFixed(2)}%`;
+                            }
+    
+                            const row = document.createElement('tr');
+    
+                            row.innerHTML = `
+                        <td>${section.section_id}</td>
+                        <td>${section.degree_name || ''}</td>
+                        <td>${section.degree_level || ''}</td>
+                        <td>${section.course_number}</td>
+                        <td>${section.evaluation_status || ''}</td>
+                        <td>${section.instructor_notes_status || ''}</td>
+                        <td>${nonFailingPercentage}</td>
+                    `;
+    
+                            sectionsTable.appendChild(row);
+                        });
+                    } else {
+                        sectionsTable.innerHTML = '<tr><td colspan="5">No sections found for the selected criteria.</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching sections status:', error);
+                });
+        });    
+        
+
+
+        // Editing Section Logic
+        document.getElementById('fetch-evaluation-sections-button').addEventListener('click', () => {
+            const semester = document.getElementById('semester-eval').value;
+            const instructor = document.getElementById('instructor-eval').value;
+
+            if (!semester || !instructor) {
+                alert("Please select both a semester and an instructor.");
+                return;
+            }
+
+            const requestBody = { semester, instructor };
+
+            fetch('/get_evaluation_sections', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const sectionsTable = document.getElementById('evaluation-sections-body');
+                    sectionsTable.innerHTML = ''; 
+
+                    if (data.sections && data.sections.length > 0) {
+                        data.sections.forEach(section => {
+                            const row = document.createElement('tr');
+                            console.log(section.semester);
+                            row.innerHTML = `
+                                <td>${section.section_id}</td>
+                                <td>${section.course_number}</td>
+                                <td>${section.year}</td>
+                                <td>${section.semester}</td>
+                                <td>${section.degree_name || ''}</td>
+                                <td>${section.degree_level || ''}</td>
+                                <td>${section.goal_code}</td>
+                                <td>${section.goal_description || ''}</td>
+                                <td>${section.instructor_notes || ''}</td>
+                                <td>${section.number_of_a || 0}</td>
+                                <td>${section.number_of_b || 0}</td>
+                                <td>${section.number_of_c || 0}</td>
+                                <td>${section.number_of_d || 0}</td>
+                                <td>${section.number_of_f || 0}</td>
+                                <td>
+                                    <button type="button" class="submit-btn edit-btn"
+                                        data-section-id="${section.section_id}" 
+                                        data-course-number="${section.course_number}" 
+                                        data-year="${section.year}"
+                                        data-semester="${section.semester}"
+                                        data-goal-code="${section.goal_code}"
+                                        data-instructor-notes="${section.instructor_notes || ''}"
+                                        data-a-completion="${section.number_of_a || 0}"
+                                        data-b-completion="${section.number_of_b || 0}"
+                                        data-c-completion="${section.number_of_c || 0}"
+                                        data-d-completion="${section.number_of_d || 0}"
+                                        data-f-completion="${section.number_of_f || 0}">
+                                        Edit
+                                    </button>
+                                </td>
+                            `;
+
+                            sectionsTable.appendChild(row);
+                        });
+                    } else {
+                        sectionsTable.innerHTML = '<tr><td colspan="11">No sections found for the selected criteria.</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching sections:", error);
+                });
+        });
+
+        
+        // Handle editing data
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('edit-btn')) {
+                const sectionId = e.target.getAttribute('data-section-id');
+                const courseNumber = e.target.getAttribute('data-course-number');
+                const year = e.target.getAttribute('data-year');
+                const semester = e.target.getAttribute('data-semester');
+                const goalCode = e.target.getAttribute('data-goal-code');
+                const instructorNotes = e.target.getAttribute('data-instructor-notes');
+                const aCompletion = e.target.getAttribute('data-a-completion');
+                const bCompletion = e.target.getAttribute('data-b-completion');
+                const cCompletion = e.target.getAttribute('data-c-completion');
+                const dCompletion = e.target.getAttribute('data-d-completion');
+                const fCompletion = e.target.getAttribute('data-f-completion');
+
+                // Populate the edit form
+                document.getElementById('section-id').value = sectionId;
+                document.getElementById('course-number').value = courseNumber;
+                document.getElementById('year').value = year;
+                console.log("Semester from button:", semester); // Debugging log
+                document.getElementById('semester').value = semester;
+                document.getElementById('goal-code').value = goalCode;
+                document.getElementById('instructor-notes').value = instructorNotes;
+                document.getElementById('a-completion').value = aCompletion;
+                document.getElementById('b-completion').value = bCompletion;
+                document.getElementById('c-completion').value = cCompletion;
+                document.getElementById('d-completion').value = dCompletion;
+                document.getElementById('f-completion').value = fCompletion;
+
+                document.getElementById('edit-section-container').style.display = 'block';
+            }
+        });
+
+        // Handle saving data
+        document.getElementById('save-evaluation-data').addEventListener('click', () => {
+            const requestData = {
+                section_id: document.getElementById('section-id').value,
+                course_number: document.getElementById('course-number').value,
+                year: document.getElementById('year').value,
+                semester: document.getElementById('semester').value,
+                goal_code: document.getElementById('goal-code').value,
+                instructor_notes: document.getElementById('instructor-notes').value,
+                number_of_a: parseInt(document.getElementById('a-completion').value, 10),
+                number_of_b: parseInt(document.getElementById('b-completion').value, 10),
+                number_of_c: parseInt(document.getElementById('c-completion').value, 10),
+                number_of_d: parseInt(document.getElementById('d-completion').value, 10),
+                number_of_f: parseInt(document.getElementById('f-completion').value, 10),
+                duplicate_degrees: document.getElementById('duplicate-degrees').checked
+            };
+
+            fetch('/save_evaluation_data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Evaluation data saved successfully!");
+                        document.getElementById('edit-section-container').style.display = 'none';
+                    } else {
+                        alert(`Failed to save evaluation data: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error saving evaluation data:", error);
+                });
+        });
+    });
+
+</script>
+
+{% include footer %}
+</body>
+</html>

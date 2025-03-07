@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Link to the CSS file using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1 class="heading-text">{{ subTitle }}</h1>
+
+<!-- Common header included from BaseView -->
+{% include header %}
+<div class="spacer">
+    {% if goal %}
+        <h2 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Degree Information</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Department</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ goal.degree_name }}</td>
+                <td>{{ goal.degree_level }}</td>
+                <td>{{ goal.department_name }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <h2 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Goal Information</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Goal Code</th>
+                <th>Goal Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ goal.goal_code }}</td>
+                <td>{{ goal.goal_description }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+
+   
+    {% if goal and courses %}
+        <h3 style="font-family: Arial, sans-serif; text-align: center; color: #333;">Courses for Goal {{ goal.goal_code }}</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-family: Arial, sans-serif;">
+            <thead style="background-color: #007bff; color: white; text-align: left;">
+            <tr>
+                <th>Course Number</th>
+                <th>Course Name</th>
+                <th>Is Core</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for course in courses %}
+                <tr>
+                    <td>{{ course.course_number }}</td>
+                    <td>{{ course.course_name }}</td>
+                    <td>{{ 'true' if course.is_core == 1 else 'false' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+<!-- Common footer included from BaseView -->
+{% include footer %}
+</body>
+</html>
